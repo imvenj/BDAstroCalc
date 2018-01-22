@@ -40,7 +40,7 @@ class SunViewController : UIViewController {
     // MARK: Constants
     
     /// For Conversion from radians to degrees.
-    let radiansToDegrees = 180 / M_PI
+    let radiansToDegrees = 180.0 / Double.pi
     
     
     // MARK: Date Picker
@@ -72,7 +72,7 @@ class SunViewController : UIViewController {
         
         super.viewDidLoad()
         
-        self.edgesForExtendedLayout = UIRectEdge.None
+        self.edgesForExtendedLayout = UIRectEdge()
         
         setupDatePicker()
         
@@ -95,9 +95,9 @@ class SunViewController : UIViewController {
         let datePickerFrame = CGRect(x: 0, y: self.view.bounds.size.height * 0.5, width: self.view.bounds.size.width, height: self.view.bounds.size.height * 0.4)
         
         datePicker.frame = datePickerFrame
-        datePicker.datePickerMode = UIDatePickerMode.DateAndTime
-        datePicker.timeZone = currentTimeZone!
-        datePicker.addTarget(self, action: "updateLabels", forControlEvents: UIControlEvents.ValueChanged)
+        datePicker.datePickerMode = UIDatePickerMode.dateAndTime
+        datePicker.timeZone = currentTimeZone! as TimeZone
+        datePicker.addTarget(self, action: #selector(SunViewController.updateLabels), for: UIControlEvents.valueChanged)
         
         self.view.addSubview(datePicker)
     }
@@ -108,14 +108,14 @@ class SunViewController : UIViewController {
     func setupHeading () {
         
         headingLabel.text = "Sun Information"
-        headingLabel.font = UIFont.preferredFontForTextStyle(UIFontTextStyleHeadline)
+        headingLabel.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
         
         let origin = CGPoint(x: self.view.bounds.size.width * 0.125, y: self.view.bounds.size.height * 0.01)
         let size = CGSize(width: self.view.bounds.size.width * 0.75, height: self.view.bounds.size.height * 0.10)
         headingLabel.frame = CGRect(origin: origin, size: size)
         
         headingLabel.adjustsFontSizeToFitWidth = true
-        headingLabel.textAlignment = .Center
+        headingLabel.textAlignment = .center
         
         self.view.addSubview(headingLabel)
     }
@@ -138,7 +138,7 @@ class SunViewController : UIViewController {
         setLabelProperties(rightAscensionLabel, heightPercentage: 0.390, initialText: "Right Ascension: ")
     }
     
-    func setLabelProperties(label: UILabel, heightPercentage: CGFloat, initialText: String) {
+    func setLabelProperties(_ label: UILabel, heightPercentage: CGFloat, initialText: String) {
         
         label.text = initialText
         
@@ -147,7 +147,7 @@ class SunViewController : UIViewController {
         label.frame = CGRect(origin: origin, size: size)
         
         label.adjustsFontSizeToFitWidth = true
-        label.textAlignment = .Center
+        label.textAlignment = .center
         
         self.view.addSubview(label)
     }
@@ -163,32 +163,32 @@ class SunViewController : UIViewController {
         
         
         let sunRiseAndSet = BDAstroCalc.sunRiseAndSet(date: datePicker.date, location: currentLocation)
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-        dateFormatter.timeZone = currentTimeZone!
+        dateFormatter.timeZone = currentTimeZone! as TimeZone!
         
-        riseLabel.text = "Rise:   \(dateFormatter.stringFromDate(sunRiseAndSet.rise))"
-        setLabel.text = "Set:   \(dateFormatter.stringFromDate(sunRiseAndSet.set))"
+        riseLabel.text = "Rise:   \(dateFormatter.string(from: sunRiseAndSet.rise))"
+        setLabel.text = "Set:   \(dateFormatter.string(from: sunRiseAndSet.set))"
         
-        solarNoonLabel.text = "Solar Noon:   \(dateFormatter.stringFromDate(sunRiseAndSet.solarNoon))"
-        nadirLabel.text = "Nadir:   \(dateFormatter.stringFromDate(sunRiseAndSet.nadir))"
+        solarNoonLabel.text = "Solar Noon:   \(dateFormatter.string(from: sunRiseAndSet.solarNoon))"
+        nadirLabel.text = "Nadir:   \(dateFormatter.string(from: sunRiseAndSet.nadir))"
         
         
-        let numberFormatter = NSNumberFormatter()
-        numberFormatter.roundingMode = NSNumberFormatterRoundingMode.RoundHalfUp
+        let numberFormatter = NumberFormatter()
+        numberFormatter.roundingMode = NumberFormatter.RoundingMode.halfUp
         
         altitudeLabel.text = "Altitude:   "
-            + numberFormatter.stringFromNumber(BDAstroCalc.sunPosition(date: datePicker.date, location: currentLocation).altitude * radiansToDegrees)!
+            + numberFormatter.string(from: NSNumber(value: BDAstroCalc.sunPosition(date: datePicker.date, location: currentLocation).altitude * radiansToDegrees))!
             + "\u{00B0}"
         azimuthLabel.text = "Azimuth:   "
-            + numberFormatter.stringFromNumber((BDAstroCalc.sunPosition(date: datePicker.date, location: currentLocation).azimuth + M_PI) * radiansToDegrees % 360)!
+            + numberFormatter.string(from: NSNumber(value: ((BDAstroCalc.sunPosition(date: datePicker.date, location: currentLocation).azimuth + Double.pi) * radiansToDegrees).truncatingRemainder(dividingBy: 360)))!
             + "\u{00B0}"
         
         declinationLabel.text = "Declination:   "
-            + numberFormatter.stringFromNumber(BDAstroCalc.sunCoordinates(daysSinceJan12000: Jan12000Date).declination * radiansToDegrees)!
+            + numberFormatter.string(from: NSNumber(value: BDAstroCalc.sunCoordinates(daysSinceJan12000: Jan12000Date).declination * radiansToDegrees))!
             + "\u{00B0}"
         rightAscensionLabel.text = "Right Ascension:   "
-            + numberFormatter.stringFromNumber((BDAstroCalc.sunCoordinates(daysSinceJan12000: Jan12000Date).rightAscension * radiansToDegrees + 360) % 360)!
+            + numberFormatter.string(from: NSNumber(value: (BDAstroCalc.sunCoordinates(daysSinceJan12000: Jan12000Date).rightAscension * radiansToDegrees + 360).truncatingRemainder(dividingBy: 360)))!
             + "\u{00B0}"
     }
 }

@@ -36,7 +36,7 @@ import UIKit
 var currentLocation = CLLocationCoordinate2D(latitude: 40.4291167, longitude: -79.9228904)
 
 // Current TimeZone. Default: PDT, for 1 Infinite Loop
-var currentTimeZone = NSTimeZone(abbreviation: "PDT")
+var currentTimeZone = TimeZone(abbreviation: "PDT")
 
 
 class MainViewController : UIViewController, CLLocationManagerDelegate {
@@ -73,7 +73,7 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
         setupURLTextView()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         // This label is in viewWillAppear becasue the location might update while the user is in one of the other VCs.
         setupCurrentLocationLabel()
@@ -87,8 +87,8 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
     
     func setupMoonVCSegueButton () {
     
-        let moonVCSegueButton = UIButton(type: UIButtonType.System)
-        moonVCSegueButton.setTitle("Moon Information", forState: UIControlState.Normal)
+        let moonVCSegueButton = UIButton(type: UIButtonType.system)
+        moonVCSegueButton.setTitle("Moon Information", for: UIControlState())
 
         let origin = CGPoint(x: self.view.bounds.size.width / 4, y: self.view.bounds.size.height * 2 / 5)
         let size = CGSize(width: self.view.bounds.size.width / 2, height: self.view.bounds.size.height / 10)
@@ -97,17 +97,17 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
         
         moonVCSegueButton.layer.borderWidth = 0.5
         moonVCSegueButton.layer.cornerRadius = 8
-        moonVCSegueButton.layer.borderColor = UIColor.blueColor().CGColor
+        moonVCSegueButton.layer.borderColor = UIColor.blue.cgColor
         
-        moonVCSegueButton.addTarget(self, action: "moonVCSegueButtonAction", forControlEvents: UIControlEvents.TouchUpInside)
+        moonVCSegueButton.addTarget(self, action: #selector(MainViewController.moonVCSegueButtonAction), for: UIControlEvents.touchUpInside)
         
         self.view.addSubview(moonVCSegueButton)
     }
     
     func setupSunVCSegueButton () {
         
-        let sunVCSegueButton = UIButton(type: UIButtonType.System)
-        sunVCSegueButton.setTitle("Sun Information", forState: UIControlState.Normal)
+        let sunVCSegueButton = UIButton(type: UIButtonType.system)
+        sunVCSegueButton.setTitle("Sun Information", for: UIControlState())
         
         let origin = CGPoint(x: self.view.bounds.size.width / 4, y: self.view.bounds.size.height * 3 / 5)
         let size = CGSize(width: self.view.bounds.size.width / 2, height: self.view.bounds.size.height / 10)
@@ -116,9 +116,9 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
         
         sunVCSegueButton.layer.borderWidth = 0.5
         sunVCSegueButton.layer.cornerRadius = 8
-        sunVCSegueButton.layer.borderColor = UIColor.blueColor().CGColor
+        sunVCSegueButton.layer.borderColor = UIColor.blue.cgColor
 
-        sunVCSegueButton.addTarget(self, action: "sunVCSegueButtonAction", forControlEvents: UIControlEvents.TouchUpInside)
+        sunVCSegueButton.addTarget(self, action: #selector(MainViewController.sunVCSegueButtonAction), for: UIControlEvents.touchUpInside)
 
         self.view.addSubview(sunVCSegueButton)
     }
@@ -143,10 +143,10 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
     func setupTitleLabel () {
         
         titleLabel.text = "BDAstroCalc"
-        titleLabel.font = UIFont.preferredFontForTextStyle(UIFontTextStyleHeadline)
+        titleLabel.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
         
         titleLabel.adjustsFontSizeToFitWidth = true
-        titleLabel.textAlignment = .Center
+        titleLabel.textAlignment = .center
         
         let origin = CGPoint(x: 0, y: self.view.bounds.size.height / 10)
         let size = CGSize(width: self.view.bounds.size.width, height: self.view.bounds.size.height / 5)
@@ -157,13 +157,12 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
     
     func setupCurrentLocationLabel () {
         
-        let numberFormatter = NSNumberFormatter()
+        let numberFormatter = NumberFormatter()
         numberFormatter.maximumFractionDigits = 2
-        
-        currentlLocationLabel.text = "Current Location: (\(numberFormatter.stringFromNumber(currentLocation.latitude)!)\u{00B0}, \(numberFormatter.stringFromNumber(currentLocation.longitude)!)\u{00B0})"
+        currentlLocationLabel.text = "Current Location: (\(numberFormatter.string(from: NSNumber(value: currentLocation.latitude))!)\u{00B0}, \(numberFormatter.string(from: NSNumber(value: currentLocation.longitude))!)\u{00B0})"
         
         currentlLocationLabel.adjustsFontSizeToFitWidth = true
-        currentlLocationLabel.textAlignment = .Center
+        currentlLocationLabel.textAlignment = .center
         
         let origin = CGPoint(x: 0, y: self.view.bounds.size.height * 5 / 20)
         let size = CGSize(width: self.view.bounds.size.width, height: self.view.bounds.size.height / 10)
@@ -179,10 +178,10 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
         
         URLTextView.text = "braindrizzlestudio.com"
         
-        URLTextView.textAlignment = .Center
+        URLTextView.textAlignment = .center
         
-        URLTextView.editable = false
-        URLTextView.dataDetectorTypes = UIDataDetectorTypes.Link
+        URLTextView.isEditable = false
+        URLTextView.dataDetectorTypes = UIDataDetectorTypes.link
         
         let origin = CGPoint(x: 0, y: self.view.bounds.size.height * 9 / 10)
         let size = CGSize(width: self.view.bounds.size.width, height: self.view.bounds.size.height / 10)
@@ -199,25 +198,25 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         
-        if CLLocationManager.authorizationStatus() == .NotDetermined { locationManager.requestWhenInUseAuthorization() }
+        if CLLocationManager.authorizationStatus() == .notDetermined { locationManager.requestWhenInUseAuthorization() }
         
         if CLLocationManager.locationServicesEnabled() { locationManager.startUpdatingLocation() }
     }
     
     
     // Updates the global currentLocation, and global currentTimeZone, when location is updated
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         currentLocation = locations[0].coordinate as CLLocationCoordinate2D
         
-        currentTimeZone = NSTimeZone.systemTimeZone()
+        currentTimeZone = TimeZone.current
 
         locationManager.stopUpdatingLocation()
         
         self.setupCurrentLocationLabel()
     }
     
-    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         
         print("Location Manager failed to get location: \(error)")
     }
