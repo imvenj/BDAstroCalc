@@ -155,7 +155,7 @@ class MoonViewController: UIViewController {
     // MARK: - Actions
     
     /// Updates the text of all of the labels.
-    func updateLabels() {
+    @objc func updateLabels() {
         
         let newDate = datePicker.date
         let Jan12000Date = BDAstroCalc.daysSinceJan12000(date: datePicker.date)

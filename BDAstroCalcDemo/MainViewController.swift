@@ -127,12 +127,12 @@ class MainViewController : UIViewController, CLLocationManagerDelegate {
     // MARK: Button Actions
     
     
-    func moonVCSegueButtonAction () {
+    @objc func moonVCSegueButtonAction () {
         
         self.navigationController?.pushViewController(MoonViewController(), animated: true)
     }
     
-    func sunVCSegueButtonAction () {
+    @objc func sunVCSegueButtonAction () {
         
         self.navigationController?.pushViewController(SunViewController(), animated: true)
     }

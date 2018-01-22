@@ -157,7 +157,7 @@ class SunViewController : UIViewController {
     // MARK: - Actions
     
     /// Updates the text of all of the labels.
-    func updateLabels() {
+    @objc func updateLabels() {
         
         let Jan12000Date = BDAstroCalc.daysSinceJan12000(date: datePicker.date)
         
